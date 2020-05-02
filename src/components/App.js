@@ -1,12 +1,14 @@
 import React from 'react'
-import Cep from './Cep'
-import TopMenu, { FormView } from '../views/FormView'
+import SignupForm from '../views/SignupForm'
+import AntdForm from '../views/AntdForm'
+import TopMenu from '../views/TopMenu'
 
 export default class App extends React.Component {
     render() {
         return (
             <div className="App">
-                <FormView/>
+                <TopMenu />
+                <AntdForm/>
             </div>
         )
     }

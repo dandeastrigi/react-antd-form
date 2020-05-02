@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input, InputNumber, Button, Row, Col } from 'antd';
+import MaskedInput from 'antd-mask-input'
 import "antd/dist/antd.css";
-import "../css/index.css";
-import "../components/Cep"
-import Cep from "../components/Cep";
-import Comment from './Comment'
+import cep from 'cep-promise'
 
 const layout = {
   labelCol: { span: 8 },
@@ -21,6 +19,40 @@ const onFinish = values => {
 
 
 export class ClientForm extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { 
+            value: '',
+            city: '',
+            address: '',
+            neighborhood: '',
+            uf: ''
+        };
+        
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    };
+        
+    handleChange(event) {
+        this.setState({value: event.target.value});
+        var inputedCep = event.target.value.replace("-", "");
+        console.log(String(inputedCep).length)
+        if(String(inputedCep).length == 8){
+            cep(inputedCep)
+            .then(response => {
+                console.log(response.city);
+                this.setState({ city: response.city });
+            }).catch(e => {
+                console.log(e);
+            });
+        }        
+    }
+
+    handleSubmit(event) {
+      alert('Um nome foi enviado: ' + this.state.value);
+      event.preventDefault();
+    }
+    
     render() 
     {
         return <div className="client">
@@ -30,10 +62,10 @@ export class ClientForm extends Component {
                 <Input />
               </Form.Item>
               <Form.Item name={['client', 'cep']} label="Cep" rules={[{ required: true }]}>
-                <Cep/>
+                <MaskedInput value={ this.state.value } onChange={this.handleChange} mask="11111-111" name="cep" text="" onChange={this.handleChange}></MaskedInput>
               </Form.Item>
               <Form.Item name={['client', 'address']} label="Rua" rules={[{ required: true }]}>
-                <Input />
+                <Input value={this.state.city} ></Input>
               </Form.Item>
               <Form.Item name={['client', 'number']} label="Numero" rules={[{ required: true }]}>
                 <InputNumber />
@@ -42,7 +74,7 @@ export class ClientForm extends Component {
                 <Input/>
               </Form.Item>
               <Form.Item name={['client', 'city']} label="Cidade" rules={[{ required: true }]}>
-                <Input/>
+                <Input type="text" value={this.state.city}></Input>
               </Form.Item>
               <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                 <Button type="primary" htmlType="submit">
